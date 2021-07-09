@@ -7,9 +7,13 @@ import ListUsers from "./ListUsers";
 import RegisterUsers from "./RegisterUsers";
 import DetailUsers from "./DetailUsers";
 import TakePicture from "./TakePicture";
+import { NavigationEvents } from "react-navigation";
+import AppContext from "../../context/AppContext";
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 var Stack = createStackNavigator();
+
 class Clients extends Component<any, any> {
+  static contextType = AppContext;
   test: any
   constructor(props: any) {
     super(props);
@@ -19,23 +23,26 @@ class Clients extends Component<any, any> {
     
   }
   render() {
+    const {changeSearchBarVisble, SearchBarVisible} = this.context
     return (
-        <NavigationContainer independent={true}>
+        <NavigationContainer independent={true} >
           <Stack.Navigator>
             <Stack.Screen name="list" component={ListUsers} options={() => (
               {header: () => <Appbar.Header>
                 <Appbar.Content title="Gestor de Usuarios" subtitle={'Sistema de Roles'} />
-                 <Appbar.Action icon="magnify" onPress={() => {}} />
+                 <Appbar.Action icon="magnify" onPress={() => {
+                   changeSearchBarVisble(!SearchBarVisible);
+                 }} />
                  <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
              </Appbar.Header>}
             )}/> 
             <Stack.Screen name="RegisterUsers" component={RegisterUsers} options={() => (
-              {header: () => <Appbar.Header>
-                <Appbar.BackAction onPress={() => {
-                  //this.props.navigation.pop();
-                }} />
+              {header: (navigate) => <Appbar.Header>
+                <Appbar.BackAction onPress={() => { 
+                  navigate.navigation.pop();
+                }} /> 
                 <Appbar.Content title="Gestor de Usuarios" subtitle={'Sistema de Roles'} />
-             </Appbar.Header>}
+             </Appbar.Header>}   
             )}/>
             <Stack.Screen name="DetailUsers" component={DetailUsers}/>
             <Stack.Screen name="TakePicture" component={TakePicture}/>

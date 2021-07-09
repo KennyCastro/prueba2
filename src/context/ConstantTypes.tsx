@@ -1,0 +1,6 @@
+export const Types = {
+    SEARCHBARVISIBLE : 'SEARCHBARVISIBLE',
+    //URICAMERA :'URICAMERA',
+
+}
+

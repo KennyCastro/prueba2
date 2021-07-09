@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import {View, Text, StyleSheet} from "react-native"; 
-import {TextInput, Button, Avatar} from "react-native-paper";
+import {View, StyleSheet, Alert} from "react-native"; 
+import {TextInput, Button, Avatar, RadioButton, Text} from "react-native-paper";
 import {StackNavigationProp} from "@react-navigation/stack";
 import axios, { AxiosResponse } from "axios";
+//const [value, setValue] = React.useState('first');
+
 interface ItemUser{
     username?: string,
     email?: string,
@@ -12,6 +14,7 @@ interface ItemUser{
 interface Mystate {
     username: string,
     email: string,
+    tipo: string,
     password: string,
     repassword: string,
     isload: boolean,
@@ -25,7 +28,7 @@ class RegisterUsers extends Component<MyProps, Mystate> {
         super(props);
         this.state = {
             isload: false,
-            username: "", email: "", password: "", repassword:""
+            username: "", email: "", password: "", repassword:"", tipo:""
         }
     }
     async checkandSendData() {
@@ -34,7 +37,7 @@ class RegisterUsers extends Component<MyProps, Mystate> {
         if (this.state.password != this.state.repassword) {
             return;
         }
-        var result: any = await axios.post<ItemUser, AxiosResponse<any>>("http://192.168.0.106:8000/api/users", this.state)
+        var result: any = await axios.post<ItemUser, AxiosResponse<any>>("http://192.168.100.9:8000/api/users", this.state)
         .then((response) => {
             return response.data;
         });
@@ -45,8 +48,8 @@ class RegisterUsers extends Component<MyProps, Mystate> {
             name: "avatar.jpg", 
             uri: this.state.pathImg, 
             type: "image/jpg"});
-            console.log("http://192.168.0.106:8000/api/uploadportrait/" + result.serverResponse._id)
-            fetch("http://192.168.0.106:8000/api/uploadportrait/" + result.serverResponse._id, {
+            console.log("http://192.168.100.9:8000/api/uploadportrait/" + result.serverResponse._id)
+            fetch("http://192.168.100.9:8000/api/uploadportrait/" + result.serverResponse._id, {
                 method: "POST",
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -69,7 +72,7 @@ class RegisterUsers extends Component<MyProps, Mystate> {
             //console.log(result_img);
             */
         }
-        
+        navigation.push("list");
     }
     onTakePicture(path: string) {
         //console.log(path);
@@ -104,6 +107,13 @@ class RegisterUsers extends Component<MyProps, Mystate> {
                 })
             }}/>
             <TextInput style={styles.txtStyles}
+            label="Tipo"
+            onChangeText={text => {   
+                this.setState({
+                    tipo: text
+                })
+            }}/>
+            <TextInput style={styles.txtStyles}
             label="Password"
             onChangeText={text => {   
                 this.setState({
@@ -117,6 +127,7 @@ class RegisterUsers extends Component<MyProps, Mystate> {
                     repassword: text
                 })
             }}/>
+            
             <Button style={styles.txtStyles} icon="camera" mode="contained" onPress={() => {
                 //this.checkandSendData();
                 this.props.navigation.push("TakePicture", {onTake: (params: string) => {
